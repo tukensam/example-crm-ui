@@ -1,0 +1,11 @@
+mat-card {
+  margin-bottom: 10px;
+}
+
+.add-button {
+  margin: 0 10px 20px;
+}
+
+#new-household-member-field {
+  width: 250px;
+}

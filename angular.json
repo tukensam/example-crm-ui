@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "MemberWorksUI": {
+    "ExampleCRMUI": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -24,9 +24,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "styles": ["src/material-theme.scss", "src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -56,10 +54,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "MemberWorksUI:build:production"
+              "buildTarget": "ExampleCRMUI:build:production"
             },
             "development": {
-              "buildTarget": "MemberWorksUI:build:development"
+              "buildTarget": "ExampleCRMUI:build:development"
             }
           },
           "defaultConfiguration": "development"

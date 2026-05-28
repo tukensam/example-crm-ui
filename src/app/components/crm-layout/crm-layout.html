@@ -1,0 +1,204 @@
+<div>
+  <h2>Organizations</h2>
+  <form>
+    <mat-form-field>
+      <mat-label>New Organization</mat-label>
+      <input matInput id="new-organization-name" type="text"/>
+    </mat-form-field>
+    <button class="add-button" matButton="elevated" (click)="addOrganization($event)">Add</button>
+  </form>
+  <div>
+    @for (org of this.organizations(); track org) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            {{ org.name }}
+            <button matButton id="delete-organization-{{ org.id }}" (click)="deleteOrganization($event, org.id)">
+              Delete Organization
+            </button>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-card-subtitle>
+            Users
+          </mat-card-subtitle>
+          <mat-list>
+          @for (user of this.users(); track user) {
+            @if (user.organizationId == org.id) {
+              <mat-list-item>
+                {{ user.name }}
+                <button matButton id="delete-user-{{ org.id }}" (click)="deleteUser($event, user.id)">
+                  Delete User
+                </button>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+            }
+          }
+          </mat-list>
+          <form>
+            <mat-form-field>
+              <mat-label>
+                New User
+              </mat-label>
+              <input matInput id="new-user-name-{{ org.id }}" />
+            </mat-form-field>
+            <button
+              class="add-button"
+              matButton="elevated"
+              id="add-new-user-button-{{ org.id }}"
+              (click)="addUser($event, org.id)"
+            >
+              Add
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+  <h2>Households</h2>
+  <form>
+    <mat-form-field>
+      <mat-label>New Household</mat-label>
+      <input matInput id="new-household-name" type="text"/>
+    </mat-form-field>
+    <button class="add-button" matButton="elevated" (click)="addHousehold($event)">
+      Add
+    </button>
+  </form>
+  <div>
+    @for (household of this.households(); track household) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            {{ household.name }}
+            <button
+              matButton
+              id="delete-household-{{ household.id }}"
+              (click)="deleteHousehold($event, household.id)"
+            >
+              Delete Household
+            </button>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-card-subtitle>
+            Household Members
+          </mat-card-subtitle>
+          <mat-list>
+            @for (user of this.users(); track user) {
+              @if (user.householdId == household.id) {
+                <mat-list-item>
+                  <span class="household-member-name">
+                    {{ user.name }}
+                  </span>
+                  @if (household.primaryUserId == user.id) {
+                    *(Primary User)*
+                  }
+                  @else {
+                    <button
+                      matButton
+                      (click)="makePrimaryUser($event, user.id, household.id)"
+                    >
+                      Make Primary User
+                    </button>
+                  }
+                  <button
+                    id="delete-user-{{ household.id }}"
+                    matButton
+                    (click)="deleteUserFromHousehold($event, user.id)"
+                  >
+                    Delete User
+                  </button>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              }
+            }
+          </mat-list>
+          <form>
+            <mat-form-field id="new-household-member-field">
+              <mat-label>
+                New household member
+              </mat-label>
+              <select matNativeControl id="new-household-member-name-{{ household.id }}">
+                @for (user of this.users(); track user) {
+                  @if (user.householdId == null) {
+                    <option value="{{user.id}}">{{ user.name }}</option>
+                  }
+                }
+              </select>
+            </mat-form-field>
+            <button class="add-button" matButton="elevated" id="add-new-user-button-{{ household.id }}" (click)="addUserToHousehold($event, household.id)">Add</button>
+          </form>
+        <mat-card-subtitle>
+          Relationships
+        </mat-card-subtitle>
+        <mat-list>
+          @for (relationship of this.relationships(); track relationship) {
+            @if (relationship.householdId == household.id) {
+                <mat-list-item>
+                  <div>
+                    {{ this.users().find(user => user.id == relationship.sourceUserId)?.name }} is a {{ relationship.type.toLowerCase() }} of {{ this.users().find(user => user.id == relationship.targetUserId)?.name }}.
+                    <button
+                      matButton
+                      id="delete-relationship-{{ relationship.id }}"
+                      (click)="deleteRelationship($event, relationship.id)"
+                    >
+                      Delete Relationship
+                    </button>
+                  </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+            }
+          }
+        </mat-list>
+          <form>
+            <mat-form-field>
+              <mat-label>
+                Household member
+              </mat-label>
+              <select matNativeControl id="new-source-user-{{ household.id }}">
+                @for (user of this.users(); track user) {
+                  @if (user.householdId == household.id) {
+                    <option value="{{ user.id }}">{{ user.name }}</option>
+                  }
+                }
+              </select>
+            </mat-form-field>
+              is a 
+            <mat-form-field>
+              <mat-label>
+                Relationship
+              </mat-label>
+              <select matNativeControl id="new-type-{{ household.id }}">
+                <option>child</option>
+                <option>parent</option>
+                <option>sibling</option>
+                <option>spouse</option>
+              </select>
+            </mat-form-field>
+            of 
+            <mat-form-field>
+              <mat-label>
+                Household member
+              </mat-label>
+              <select matNativeControl id="new-target-user-{{ household.id }}">
+                @for (user of this.users(); track user) {
+                  @if (user.householdId == household.id) {
+                    <option value="{{ user.id }}">{{ user.name }}</option>
+                  }
+                }
+              </select>
+            </mat-form-field>
+            <button
+              class="add-button"
+              matButton="elevated"
+              (click)="addRelationship($event, household.id)"
+            >
+              Add
+            </button>
+          </form>
+        </mat-card-content> 
+      </mat-card>
+    }
+  </div>
+</div>
